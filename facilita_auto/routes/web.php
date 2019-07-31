@@ -67,15 +67,19 @@ Route::group(['middleware'=>'auth'], function(){
     Route::put('/configuracoes/salvar', 'ConfiguracaoController@salvar')->name('configuracao.salvar');
 
     //Rota de Pedidos
-    Route::get('/pedidos',                      'PedidoController@pedidos')->name('pedidos');
-    Route::get('/pedido/novo',                  'PedidoController@novo')->name('pedido.novo');
-    Route::get('/pedido/editar/{id}',           'PedidoController@editar')->name('pedido.editar');
-    Route::delete('/pedido/excluir/{id}',       'PedidoController@excluir')->name('pedido.excluir');
-    Route::post('/pedido/incluir',              'PedidoController@incluir')->name('pedido.incluir');
-    Route::put('/pedido/atualizar/{id}',        'PedidoController@salvar')->name('pedido.salvar');
-    Route::put('/pedido/salvar/debitos/{id}',   'PedidoController@salvarDebitos')->name('pedido.salvar.debitos');
-    Route::get('/pedido/{id}',                  'PedidoController@pedido')->name('pedido.info');
-
+    Route::get('/pedidos',                       'PedidoController@pedidos')->name('pedidos');
+    Route::get('/pedido/novo',                   'PedidoController@novo')->name('pedido.novo');
+    Route::get('/pedido/editar/{id}',            'PedidoController@editar')->name('pedido.editar');
+    Route::delete('/pedido/excluir/{id}',        'PedidoController@excluir')->name('pedido.excluir');
+    Route::post('/pedido/incluir',               'PedidoController@incluir')->name('pedido.incluir');
+    Route::put('/pedido/atualizar/{id}',         'PedidoController@salvar')->name('pedido.salvar');
+    Route::put('/pedido/salvar/debitos/{id}',    'PedidoController@salvarDebitos')->name('pedido.salvar.debitos');
+    Route::put('/pedido/salvar/endereco/{id}',   'PedidoController@salvarEndereco')->name('pedido.salvar.endereco');
+    Route::get('/pedido/debitos/atualizar/{id}', 'PedidoController@atualizarDebitos')->name('pedido.atualizar.debitos');
     
+    Route::get('/pedido/{id}',                   'PedidoController@pedido')->name('pedido.info');
+
+    //Rotas de Documentos
+    Route::post('/documentos/incluir', 'DocumentoController@incluir')->name('documento.incluir');
 });
 

@@ -20,6 +20,15 @@ class Pedido extends Migration
                 $table->string('cpf');
                 $table->string('uf');
                 $table->string('placa');
+                
+                $table->string('cep');
+                $table->string('logradouro');
+                $table->string('numero');
+                $table->string('bairro');
+                $table->string('cidade');
+                $table->string('uf');
+                $table->string('complemento');
+                
                 $table->timestamps();
             });
         }

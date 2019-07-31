@@ -3,25 +3,26 @@
         <div class="box-body box-profile">
             <h3 class="profile-username pt-2" style="border-bottom:1px solid #ffc107;">Endereço</h3>
                 <!-- inicio form -->
-            <form action="#" method="post" >
+            <form action="{{ route('pedido.salvar.endereco', $pedido->id) }}" method="post" >
+                <input type="hidden" name="_method" value="put" />
                 {{ csrf_field() }}
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group">
                             <label id="erroCEP" style="color:red"></label>
-                            <input placeholder="CEP" maxlength="9" onkeypress="mascara(this, '#####-###')" value="" type="text" id="cep" name="cep" class="form-control">
+                        <input placeholder="CEP" maxlength="9" onkeypress="mascara(this, '#####-###')" value="{{ $pedido->cep }}" type="text" id="cep" name="cep" class="form-control">
                         </div>  
                     </div>
                     <div class="col-md-8">
                         <div class="form-group">
                             <label for=""></label>
-                            <input placeholder="Endereço" type="text" value="" id="rua" name="endereco" class="form-control">
+                            <input placeholder="Endereço" type="text" value="{{ $pedido->logradouro }}" id="rua" name="logradouro" class="form-control">
                         </div>  
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for=""></label>
-                            <input placeholder="Número" type="text" value="" name="nro" class="form-control">
+                            <input placeholder="Número" type="text" value="{{ $pedido->numero }}" name="numero" class="form-control">
                         </div>  
                     </div>
                 </div>
@@ -29,7 +30,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <input placeholder="Cidade" id="cidade" type="text" name="cidade" value="" class="form-control">
+                            <input placeholder="Cidade" id="cidade" type="text" name="cidade" value="{{ $pedido->cidade }}" class="form-control">
                         </div>  
                     </div>
                     <div class="col-md-2">
@@ -45,7 +46,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input placeholder="Bairro" type="text" value="" id="bairro" name="bairro" class="form-control">
+                            <input placeholder="Bairro" type="text" value="{{ $pedido->bairro }}" id="bairro" name="bairro" class="form-control">
                         </div>  
                     </div>
                 </div>
@@ -53,14 +54,14 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <input placeholder="Complemento" type="text" value="" id="complemento" name="complemento" class="form-control">
+                            <input placeholder="Complemento" type="text" value="{{ $pedido->complemento }}" id="complemento" name="complemento" class="form-control">
                         </div>  
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a href="javascript:void(0);" class="btn pl-5 pr-5 pt-2 pb-2 btn-success">SALVAR ENDEREÇO</a>
+                        <input type="submit" class="btn pl-5 pr-5 pt-2 pb-2 btn-success" value="SALVAR ENDEREÇO">
                     </div>
                 </div>
             </form>

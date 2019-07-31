@@ -14,4 +14,8 @@ class Pedido extends Model
         'uf',
         'placa'
     ];
+
+    public function documentos(){
+        return $this->hasMany(Documentos::class);
+    }
 }

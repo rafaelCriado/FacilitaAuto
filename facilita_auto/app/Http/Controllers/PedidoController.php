@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Pedido;
 use App\Estado;
 use App\Configuracao;
+use App\Documentos;
 use App\ApiBancoRendimento;
 use Illuminate\Http\Request;
 use App\Http\Requests\PedidoRequest;
+use Illuminate\Support\Facades\Storage;
 
 
 class PedidoController extends Controller
@@ -44,6 +46,18 @@ class PedidoController extends Controller
         }
     }
 
+    public function documentosPedido($documentos){
+        $nomes = [];
+        foreach($documentos as $documento){
+            $nome = $documento->pedido_id.$documento->tipo.'.'.$documento->arquivo_tipo;
+            //if(!Storage::disk('public')->exists($nome)){
+                $this->criarImagem($documento->arquivo,$nome);
+            //}
+
+            $nomes[]= ['tipo'=> $documento->tipo, 'nome'=>$nome];
+        }
+        return $nomes;
+    }
 
     //Mostra informações de um pedido
     public function pedido($id){
@@ -56,33 +70,38 @@ class PedidoController extends Controller
             $debitos = $api->ConsultaDebitos($pedido->placa);
             $somaDebitos = $this->somaDebitos($debitos);
             $somaDebitos['TAXA_SERVICO'] = (float)$configuracao->taxa_servico;
-            $total = $this->somaArray($somaDebitos);
-
+            $total  = $this->somaArray($somaDebitos);
+            //Gera imagens dos documentos
+            $docs = $this->documentosPedido($pedido->documentos);
             
             $arrayView = [
                 'estados'=>$estados,
                 'pedido'=>$pedido,
                 'debitos'=>$debitos,
                 'soma_debitos'=>$somaDebitos,
-                'total'=>$total
+                'total'=>$total,
+                'documentos'=>$docs
             ];
+            //dd($arrayView);
             return view('pedido.info', $arrayView);
         } catch (\Exception $th) {
             dd($th);
-            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');;
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
         } 
     }
-
 
     public function salvarDebitos(Request $request, $id){
         try {
             $pedido = Pedido::find($id);
-            
-
+            dd($pedido);
         } catch (\Exception $th) {
             dd($th);
-            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');;
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
         }
+    }
+
+    public function atualizarDebitos($id){
+        dd(['atualizar debitos', $id]);
     }
 
     //Tela de cadastro de novo pedido
@@ -91,7 +110,7 @@ class PedidoController extends Controller
             $estados = Estado::all();
             return view('pedido.novo', ['estados'=> $estados]);
         } catch (\Exception $th) {
-            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');;
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
         }
     }
 
@@ -101,7 +120,7 @@ class PedidoController extends Controller
             $pedido = Pedido::find($id);
             dd($pedido);
         } catch (\Exception $th) {
-            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');;
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
         }
     }
 
@@ -111,7 +130,7 @@ class PedidoController extends Controller
             $pedido = Pedido::find($id);
             dd($pedido);
         } catch (\Exception $th) {
-            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');;
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
         }
     }
 
@@ -145,7 +164,41 @@ class PedidoController extends Controller
             $pedido = Pedido::find($id);
             dd($pedido);
         } catch (\Exception $th) {
-            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');;
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
         }
+    }
+
+
+    public function salvarEndereco(Request $request, $id){
+        try {
+            $pedido = Pedido::find($id);
+
+            $pedido->cep         = request('cep');
+            $pedido->logradouro  = request('logradouro');
+            $pedido->bairro      = request('bairro');
+            $pedido->cidade      = request('cidade');
+            $pedido->uf          = request('uf');
+            $pedido->numero      = request('numero');
+            $pedido->complemento = request('complemento');
+
+            $save = $pedido->save();
+            if($save){
+                \Session::flash('mensagem', ['msg'=>'Endereço cadastrado com sucesso', 'class'=>'success']);
+                return redirect()->route('pedido.info', $pedido->id);
+            }else{
+                \Session::flash('mensagem', ['msg'=>'Erro ao cadastrar endereço!', 'class'=>'danger']);
+                return redirect()->route('pedido.novo');
+            }
+        } catch (\Exception $th) {
+            return back()->withErrors('Ops! Aconteceu algum problema, tente novamente!');
+        }
+    }
+    
+
+    function criarImagem($file64,$nome){
+        if(!empty($file64)){
+            Storage::disk('public')->put($nome, base64_decode($file64));
+        }
+        return $nome;
     }
 }
